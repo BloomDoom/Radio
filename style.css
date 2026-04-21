@@ -358,7 +358,7 @@ body, html {
 .led-luz-on {
     width: 6px;
     height: 6px;
-    background: var(--accent);
+    background: #27F576;
     border-radius: 50%;
     box-shadow: 0 0 10px var(--accent), 0 0 2px #fff;
 }
