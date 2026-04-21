@@ -258,7 +258,7 @@ function connectChat() {
         ws = new WebSocket(CHAT_WS);
 
         ws.onopen = () => {
-            addSystemMsg('Conectado al chat.');
+            addSystemMsg('En linea');
         };
 
         ws.onmessage = (e) => {

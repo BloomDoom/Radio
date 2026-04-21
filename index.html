@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mix Mix Radio</title>
+    <title>Sideral Radio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -15,24 +15,24 @@
          SCREEN 1 — COUNTDOWN
     ══════════════════════════════ -->
     <div id="countdownScreen" class="screen">
-        <p class="next-label">NEXT SHOW IN</p>
+        <p class="next-label">PRÓXIMA TRASMISIÓN</p>
         <div class="flip-clock">
             <div class="flip-unit">
                 <div class="flip-pair" id="fp-days"></div>
-                <span class="unit-lbl">DAYS</span>
+                <span class="unit-lbl">DIAS</span>
             </div>
             <span class="fc-colon">:</span>
             <div class="flip-unit">
                 <div class="flip-pair" id="fp-hours"></div>
-                <span class="unit-lbl">HOURS</span>
+                <span class="unit-lbl">HORAS</span>
             </div>
             <span class="fc-colon">:</span>
             <div class="flip-unit">
                 <div class="flip-pair" id="fp-mins"></div>
-                <span class="unit-lbl">MINUTES</span>
+                <span class="unit-lbl">MINUTOS</span>
             </div>
         </div>
-        <button class="enter-btn" id="enterBtn">ENTER LIVE ↗</button>
+        <button class="enter-btn" id="enterBtn">ENTRAR A RADIO EN VIVO ↗</button>
     </div>
 
     <!-- ══════════════════════════════
@@ -65,7 +65,7 @@
         <div class="chat-container">
 
             <div class="nick-row">
-                <input type="text" id="nickInput" placeholder="Tu nombre..." maxlength="24" autocomplete="off" spellcheck="false">
+                <input type="text" id="nickInput" placeholder="¿Quién habla?" maxlength="24" autocomplete="off" spellcheck="false">
             </div>
 
             <div class="chat-messages" id="chatMessages">
@@ -73,8 +73,8 @@
             </div>
 
             <div class="chat-input-area">
-                <input type="text" id="msgInput" placeholder="Mensaje..." maxlength="200" autocomplete="off">
-                <button class="send-btn" id="sendBtn">ENVIAR</button>
+                <input type="text" id="msgInput" placeholder="..." maxlength="200" autocomplete="off">
+                <button class="send-btn" id="sendBtn">↗</button>
             </div>
 
         </div>
