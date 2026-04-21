@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mix Mix Radio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,9 +15,7 @@
          SCREEN 1 — COUNTDOWN
     ══════════════════════════════ -->
     <div id="countdownScreen" class="screen">
-
         <p class="next-label">NEXT SHOW IN</p>
-
         <div class="flip-clock">
             <div class="flip-unit">
                 <div class="flip-pair" id="fp-days"></div>
@@ -33,9 +32,7 @@
                 <span class="unit-lbl">MINUTES</span>
             </div>
         </div>
-
         <button class="enter-btn" id="enterBtn">ENTER LIVE ↗</button>
-
     </div>
 
     <!-- ══════════════════════════════
@@ -43,69 +40,62 @@
     ══════════════════════════════ -->
     <div id="liveScreen" class="screen hidden">
 
-        <!-- Left: DJ Fader -->
-        <div class="player-section">
-
-            <div class="fader-panel">
-                <span class="fp-brand">MIX MIX RADIO</span>
-                <div class="fp-onair">
-                    <span class="fp-onair-dot"></span>
-                    <span class="fp-onair-label">ON AIR</span>
-                </div>
-                <div class="fp-body">
-                    <div class="fp-vu" id="vuLeft"></div>
-                    <div class="fp-fader-slot">
-                        <input type="range" id="volumeFader" class="fp-fader-input"
-                               min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
-                    </div>
-                    <div class="fp-vu" id="vuRight"></div>
+        <!-- Radio Section -->
+        <div class="radio-section">
+            <div class="header-wrapper">
+                <div id="vivo-status">
+                    <div class="led-vivo-rojo" id="vivoLed"></div>
+                    <span class="vivo-font">VIVO</span>
                 </div>
             </div>
 
-            <!-- Center: Play + Status -->
-            <div class="center-controls">
-                <button class="play-btn" id="playBtn" aria-label="Play">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <polygon points="7,4 20,12 7,20" fill="currentColor"/>
-                    </svg>
-                </button>
-
+            <div class="fader-area">
+                <div class="surco"></div>
+                <div id="vu-left" class="vu-col"></div>
+                <input type="range" id="volume-fader" min="0" max="1" step="0.01" value="0.2" class="technics-fader" aria-label="Volume">
+                <div id="vu-right" class="vu-col"></div>
             </div>
 
+            <button id="play-btn" class="technics-button" aria-label="Play / Stop">
+                <div id="status-led" class="led-luz-off"></div>
+            </button>
         </div>
 
-        <!-- Right: Chat -->
-        <aside class="chat-panel">
-
-            <div class="chat-header">
-                <span>CHAT EN VIVO</span>
-                <span class="chat-dot" id="chatDot"></span>
-            </div>
+        <!-- Chat Section -->
+        <div class="chat-container">
 
             <div class="nick-row">
-                <input type="text" id="nickInput" placeholder="Tu nombre" maxlength="24">
+                <input type="text" id="nickInput" placeholder="Tu nombre..." maxlength="24" autocomplete="off" spellcheck="false">
             </div>
 
             <div class="chat-messages" id="chatMessages">
                 <div class="msg system">Conectando al chat…</div>
             </div>
 
-            <div class="chat-footer">
-                <input type="text" id="msgInput" placeholder="Decí algo…" maxlength="200">
-                <button id="sendBtn">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M12 19V5M5 12l7-7 7 7"
-                              stroke="currentColor" stroke-width="2"
-                              stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
+            <div class="chat-input-area">
+                <input type="text" id="msgInput" placeholder="Mensaje..." maxlength="200" autocomplete="off">
+                <button class="send-btn" id="sendBtn">ENVIAR</button>
             </div>
 
-        </aside>
+        </div>
 
     </div>
 
-    <audio id="radioStream" preload="none"></audio>
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" class="admin-overlay hidden">
+        <div class="admin-box">
+            <div class="led-font admin-title">// ADMIN //</div>
+            <label class="admin-label">PRÓXIMO SHOW</label>
+            <input type="datetime-local" id="adminDateInput" class="admin-input">
+            <div class="admin-current" id="adminCurrent"></div>
+            <div class="admin-buttons">
+                <button id="adminSave" class="admin-btn save">GUARDAR</button>
+                <button id="adminCancel" class="admin-btn cancel">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="radio-player" crossorigin="anonymous"></audio>
     <script src="script.js"></script>
 </body>
 </html>
