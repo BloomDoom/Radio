@@ -5,13 +5,13 @@
 
 :root {
     --bg:       #000000;
-    --surface:  #0a0a0a;
-    --border:   #151515;
-    --border-2: #222222;
+    --surface:  #000000;
+    --border:   #000000;
+    --border-2: #050505;
     --text:     #ffffff;
     --muted:    rgba(255,255,255,0.28);
-    --accent:   #DFFF00;
-    --accent-glow: rgba(223,255,0,0.55);
+    --accent:   #27F576;
+    --accent-glow: rgba(115, 240, 142);
     --cyan:     #7CFCE1;
     --chat-w:   300px;
 }
@@ -192,7 +192,7 @@ body, html {
 }
 .enter-btn:hover {
     color: var(--accent);
-    border-color: rgba(223,255,0,0.4);
+    border-color: rgba(115, 240, 142, 0.5);
     text-shadow: 0 0 8px var(--accent-glow);
 }
 
@@ -342,7 +342,7 @@ body, html {
     margin-top: 40px;
     width: 85px;
     padding: 10px;
-    background: #111;
+    background: #000000;
     border: 1px solid var(--border-2);
     border-radius: 4px;
     display: flex;
@@ -352,7 +352,7 @@ body, html {
     cursor: pointer;
     transition: background 0.15s;
 }
-.technics-button:hover  { background: #1a1a1a; }
+.technics-button:hover  { background: #000000; }
 .technics-button:active { transform: scale(0.97); }
 
 .led-luz-on {
@@ -375,7 +375,7 @@ body, html {
 .chat-container {
     flex: 1;
     min-height: 0;
-    background: #050505;
+    background: #000000;
     border-top: 1px solid var(--border);
     display: flex;
     flex-direction: column;
@@ -390,8 +390,8 @@ body, html {
     width: 100%;
     background: none;
     border: none;
-    border-bottom: 1px solid var(--border-2);
-    color: var(--text);
+    border-bottom: 0px solid var(--border-2);
+    color: var(--muted);
     font-family: inherit;
     font-size: 12px;
     font-weight: 300;
@@ -400,7 +400,7 @@ body, html {
     letter-spacing: 0.5px;
     transition: border-color 0.2s;
 }
-.nick-row input:focus            { border-color: rgba(223,255,0,0.5); }
+.nick-row input:focus            { border-color: rgba(0,0,0,0); }
 .nick-row input::placeholder     { color: var(--muted); }
 .nick-row input:-webkit-autofill,
 .nick-row input:-webkit-autofill:focus {
@@ -455,7 +455,7 @@ body, html {
         width: 12px;
     }
     .chat-messages::-webkit-scrollbar-track {
-        background: #0a0a0a;
+        background: #00000;
         border-left: 1px solid #111;
     }
     .chat-messages::-webkit-scrollbar-thumb {
@@ -472,13 +472,13 @@ body, html {
     color: #888;
     font-size: 12px;
     line-height: 1.45;
-    border-bottom: 1px solid #0a0a0a;
+    border-bottom: 0px solid #0a0a0a;
     padding-bottom: 6px;
     word-break: break-word;
     flex-shrink: 0;
 }
 .msg .nick {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'Arial', monospace;
     font-size: 9px;
     display: block;
     margin-bottom: 2px;
@@ -497,7 +497,7 @@ body, html {
 
 /* Chat input */
 .chat-input-area {
-    background: #0a0a0a;
+    background: #000000;
     padding: 12px 15px;
     padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
     display: flex;
@@ -520,7 +520,7 @@ body, html {
     transition: border-color 0.2s;
     letter-spacing: 0.3px;
 }
-.chat-input-area input:focus         { border-color: rgba(223,255,0,0.4); }
+.chat-input-area input:focus         { border-color: rgba(115, 240, 142, 0.5); }
 .chat-input-area input::placeholder  { color: var(--muted); }
 .chat-input-area input:-webkit-autofill,
 .chat-input-area input:-webkit-autofill:focus {
@@ -530,7 +530,7 @@ body, html {
 
 .send-btn {
     font-family: 'Silkscreen', monospace;
-    background: #111;
+    background: #050505;
     border: 1px solid var(--border-2);
     color: var(--accent);
     padding: 0 14px;
@@ -544,7 +544,7 @@ body, html {
 }
 .send-btn:hover {
     background: #1a1a1a;
-    border-color: rgba(223,255,0,0.3);
+    border-color: rgba(115, 240, 142, 0.5);
 }
 
 /* ─────────────────────────────────────────────
@@ -608,7 +608,7 @@ body, html {
     flex-direction: column;
     gap: 16px;
     min-width: 280px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.9), 0 0 1px rgba(223,255,0,0.15);
+    box-shadow: 0 0 40px rgba(0,0,0,0.9), 0 0 1px rgba(115, 240, 142);
 }
 
 .admin-title {
@@ -623,6 +623,7 @@ body, html {
     letter-spacing: 2px;
     color: var(--muted);
     text-transform: uppercase;
+  text-align: center;
 }
 
 .admin-input {
@@ -639,7 +640,7 @@ body, html {
     transition: border-color 0.2s;
     color-scheme: dark;
 }
-.admin-input:focus { border-color: rgba(223,255,0,0.5); }
+.admin-input:focus { border-color: rgba(115, 240, 142); }
 
 .admin-current {
     font-family: 'Silkscreen', monospace;
@@ -672,7 +673,7 @@ body, html {
 }
 .admin-btn.save:hover {
     background: #1a1a1a;
-    border-color: rgba(223,255,0,0.4);
+    border-color: rgba(115, 240, 142);
 }
 .admin-btn.cancel {
     background: #0a0a0a;
