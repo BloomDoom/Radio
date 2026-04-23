@@ -123,7 +123,7 @@ function tick() {
     const diff = SHOW_TIME - new Date();
     if (diff <= 0) {
         unitDays.update(0); unitHours.update(0); unitMins.update(0);
-        setTimeout(switchToLive, 700);
+        setTimeout(switchToLive, 1000);
         return;
     }
     const totalSecs = Math.floor(diff / 1000);

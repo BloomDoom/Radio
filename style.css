@@ -766,3 +766,48 @@ body, html {
     background: #111;
     color: var(--text);
 }
+
+/* ─────────────────────────────────────────────
+   PORTRAIT BLOCK OVERLAY
+───────────────────────────────────────────── */
+#portrait-block {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding: 32px;
+}
+
+#portrait-block svg {
+    width: 52px;
+    height: 52px;
+    fill: var(--accent);
+    opacity: 0.85;
+    animation: rotate-hint 1.8s ease-in-out infinite;
+}
+
+@keyframes rotate-hint {
+    0%   { transform: rotate(0deg); }
+    40%  { transform: rotate(90deg); }
+    60%  { transform: rotate(90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+#portrait-block p {
+    font-family: 'Silkscreen', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+@media (orientation: portrait) and (max-width: 1024px) {
+    #portrait-block { display: flex; }
+}
