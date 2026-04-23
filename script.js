@@ -19,14 +19,19 @@ class FlipDigit {
         this.el = document.createElement('div');
         this.el.className = 'fd';
         this.el.innerHTML =
-            '<div class="fd-new"><span>0</span></div>' +
-            '<div class="fd-flap"><div class="fd-flap-num"><span>0</span></div></div>' +
+            '<div class="fd-upper-back"><span>0</span></div>'  +
+            '<div class="fd-upper-front"><span>0</span></div>' +
+            '<div class="fd-lower-back"><span>0</span></div>'  +
+            '<div class="fd-lower-front"><span>0</span></div>' +
             '<div class="fd-line"></div>';
         parent.appendChild(this.el);
 
-        this._newSpan  = this.el.querySelector('.fd-new > span');
-        this._flapSpan = this.el.querySelector('.fd-flap-num > span');
-        this._flapEl   = this.el.querySelector('.fd-flap');
+        this._upperBackSpan  = this.el.querySelector('.fd-upper-back span');
+        this._upperFrontSpan = this.el.querySelector('.fd-upper-front span');
+        this._upperFrontEl   = this.el.querySelector('.fd-upper-front');
+        this._lowerBackSpan  = this.el.querySelector('.fd-lower-back span');
+        this._lowerFrontSpan = this.el.querySelector('.fd-lower-front span');
+        this._lowerFrontEl   = this.el.querySelector('.fd-lower-front');
     }
 
     update(v) {
@@ -36,44 +41,61 @@ class FlipDigit {
         this.val  = v;
 
         if (old === null) {
-            this._newSpan.textContent  = v;
-            this._flapSpan.textContent = v;
+            this._upperBackSpan.textContent  = v;
+            this._upperFrontSpan.textContent = v;
+            this._lowerBackSpan.textContent  = v;
+            this._lowerFrontSpan.textContent = v;
             return;
         }
         if (this.animating) {
-            this._newSpan.textContent  = v;
-            this._flapSpan.textContent = v;
+            this._upperBackSpan.textContent  = v;
+            this._upperFrontSpan.textContent = v;
+            this._lowerBackSpan.textContent  = v;
+            this._lowerFrontSpan.textContent = v;
             return;
         }
 
         this.animating = true;
-        this._flapSpan.textContent = old;
-        this._newSpan.textContent  = v;
-        this._resetFlap();
+
+        // Top: front holds old (folds away), back pre-loads new (revealed)
+        this._upperFrontSpan.textContent = old;
+        this._upperBackSpan.textContent  = v;
+        // Bottom: back holds old (stays visible), front pre-loads new (falls in)
+        this._lowerBackSpan.textContent  = old;
+        this._lowerFrontSpan.textContent = v;
+
+        this._upperFrontEl.style.animation = 'none';
+        this._upperFrontEl.style.transform = 'rotateX(0deg)';
+        this._lowerFrontEl.style.animation = 'none';
+        this._lowerFrontEl.style.transform = 'rotateX(-90deg)';
+        void this._upperFrontEl.offsetWidth;
+        this._upperFrontEl.style.animation = '';
+        this._upperFrontEl.style.transform = '';
+        this._lowerFrontEl.style.animation = '';
+        this._lowerFrontEl.style.transform = '';
 
         requestAnimationFrame(() => {
             requestAnimationFrame(() => this.el.classList.add('flipping'));
         });
 
+        // Total duration: bottom delay (0.3s) + bottom duration (0.5s) = 0.8s
         setTimeout(() => {
             this.el.classList.remove('flipping');
-            this._flapEl.style.animation = 'none';
-            this._flapEl.style.transform  = 'rotateX(0deg)';
-            this._flapSpan.textContent    = v;
+            // Settle: sync back layers, reset fronts for next flip
+            this._lowerBackSpan.textContent  = v;
+            this._upperFrontSpan.textContent = v;
+            this._upperFrontEl.style.animation = 'none';
+            this._upperFrontEl.style.transform = 'rotateX(0deg)';
+            this._lowerFrontEl.style.animation = 'none';
+            this._lowerFrontEl.style.transform = 'rotateX(-90deg)';
             requestAnimationFrame(() => {
-                this._flapEl.style.animation = '';
-                this._flapEl.style.transform  = '';
+                this._upperFrontEl.style.animation = '';
+                this._upperFrontEl.style.transform = '';
+                this._lowerFrontEl.style.animation = '';
+                this._lowerFrontEl.style.transform = '';
                 this.animating = false;
             });
-        }, 380);
-    }
-
-    _resetFlap() {
-        this._flapEl.style.animation = 'none';
-        this._flapEl.style.transform  = 'rotateX(0deg)';
-        void this._flapEl.offsetWidth;
-        this._flapEl.style.animation = '';
-        this._flapEl.style.transform  = '';
+        }, 900);
     }
 }
 
@@ -133,7 +155,13 @@ function switchToLive() {
     }, 680);
 }
 
-document.getElementById('enterBtn').addEventListener('click', switchToLive);
+document.getElementById('enterBtn').addEventListener('click', () => {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    switchToLive();
+});
 
 /* ═══════════════════════════════════════════════════════════
    AUDIO + VU METERS
@@ -150,7 +178,7 @@ let isPlaying = false;
 
 // Build VU circles — all accent color, top dot in cyan
 for (let i = 0; i < VU_COUNT; i++) {
-    const color = i === VU_COUNT - 1 ? '#7CFCE1' : '#DFFF00';
+    const color = i === VU_COUNT - 1 ? '#7CFCE1' : '#27F576';
     const l = document.createElement('div'); l.className = 'vu-circle'; l.dataset.color = color;
     const r = document.createElement('div'); r.className = 'vu-circle'; r.dataset.color = color;
     vuL.appendChild(l);

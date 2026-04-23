@@ -1,7 +1,18 @@
 /* ─────────────────────────────────────────────
+   FONTS
+───────────────────────────────────────────── */
+@font-face {
+    font-family: 'LedDisplay';
+    src: url('LedDisplayFont/LedDisplay.otf') format('opentype'),
+         url('LedDisplayFont/LedDisplay.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* ─────────────────────────────────────────────
    RESET & VARIABLES
 ───────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
     --bg:       #000000;
@@ -29,7 +40,7 @@ body, html {
 }
 
 .led-font {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--accent);
@@ -68,19 +79,22 @@ body, html {
 }
 
 .next-label {
-    font-family: 'Silkscreen', monospace;
-    font-size: 10px;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
+    font-size: 20px;
     letter-spacing: 4px;
-    color: var(--muted);
+    color: var(--text);
     text-transform: uppercase;
 }
 
 /* Flip Clock */
 .flip-clock {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 34px;
 }
+
+.fc-colon { display: none; }
 
 .flip-unit {
     display: flex;
@@ -92,15 +106,15 @@ body, html {
 .flip-pair { display: flex; gap: 5px; }
 
 .unit-lbl {
-    font-family: 'Silkscreen', monospace;
-    font-size: 8px;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
+    font-size: 14px;
     letter-spacing: 3px;
-    color: var(--muted);
+    color: var(--text);
     text-transform: uppercase;
 }
 
 .fc-colon {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 72px;
     color: rgba(255,255,255,0.12);
     line-height: 100px;
@@ -110,28 +124,24 @@ body, html {
 /* Flip Digit Card */
 .fd {
     position: relative;
-    width: 82px;
-    height: 100px;
-    perspective: 500px;
+    width: 187px;
+    height: 221px;
+    perspective: 1020px;
 }
 
-.fd-new {
+/* Top half — back layer, next number pre-loaded, revealed when front folds */
+.fd-upper-back {
     position: absolute;
-    inset: 0;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    overflow: hidden;
     background: #111;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Silkscreen', monospace;
-    font-size: 62px;
-    color: var(--accent);
-    text-shadow: 0 0 20px var(--accent-glow);
-    user-select: none;
-    box-shadow: inset 0 -2px 8px rgba(0,0,0,0.6);
+    border-radius: 4px 4px 0 0;
+    z-index: 1;
 }
 
-.fd-flap {
+/* Top half — front layer, current number, folds down on change */
+.fd-upper-front {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 50%;
@@ -139,19 +149,63 @@ body, html {
     background: #181818;
     border-radius: 4px 4px 0 0;
     transform-origin: bottom center;
-    z-index: 2;
     backface-visibility: hidden;
+    z-index: 2;
 }
 
-.fd-flap-num {
+/* Bottom half — back layer, current number, stays visible while top folds */
+.fd-lower-back {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    overflow: hidden;
+    background: #111;
+    border-radius: 0 0 4px 4px;
+    box-shadow: inset 0 -2px 8px rgba(0,0,0,0.6);
+    z-index: 1;
+}
+
+/* Bottom half — front layer, next number, folded up at center line, falls down */
+.fd-lower-front {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    overflow: hidden;
+    background: #181818;
+    border-radius: 0 0 4px 4px;
+    transform-origin: top center;
+    transform: rotateX(-90deg);
+    backface-visibility: hidden;
+    z-index: 2;
+}
+
+/* Spans inside top halves: 200% height from top, shows upper half of digit */
+.fd-upper-back span,
+.fd-upper-front span {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 200%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Silkscreen', monospace;
-    font-size: 62px;
+    font-family: Arial, sans-serif;
+    font-size: 215px;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+    user-select: none;
+}
+
+/* Spans inside bottom halves: 200% height from bottom, shows lower half of digit */
+.fd-lower-back span,
+.fd-lower-front span {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 200%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: 215px;
     color: var(--accent);
     text-shadow: 0 0 20px var(--accent-glow);
     user-select: none;
@@ -167,23 +221,32 @@ body, html {
     z-index: 10;
 }
 
-.fd.flipping .fd-flap {
-    animation: flapFold 0.30s cubic-bezier(0.6, 0, 1, 0.4) forwards;
+.fd.flipping .fd-upper-front {
+    animation: topFold 0.5s cubic-bezier(0.4, 0, 0.6, 1) forwards;
 }
 
-@keyframes flapFold {
+.fd.flipping .fd-lower-front {
+    animation: bottomFold 0.5s cubic-bezier(0.4, 0, 0.6, 1) 0.3s forwards;
+}
+
+@keyframes topFold {
     from { transform: rotateX(0deg); }
     to   { transform: rotateX(90deg); }
 }
 
+@keyframes bottomFold {
+    from { transform: rotateX(-90deg); }
+    to   { transform: rotateX(0deg); }
+}
+
 /* Enter button */
 .enter-btn {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     background: none;
-    border: 1px solid var(--border-2);
+    border: 1px solid var(--accent);
     border-radius: 4px;
-    color: var(--muted);
-    font-size: 9px;
+    color: var(--accent);
+    font-size: 13px;
     letter-spacing: 3px;
     padding: 10px 22px;
     cursor: pointer;
@@ -343,7 +406,7 @@ body, html {
     width: 85px;
     padding: 10px;
     background: #000000;
-    border: 1px solid var(--border-2);
+    border: 1px solid var(--accent);
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -373,6 +436,7 @@ body, html {
    CHAT SECTION
 ───────────────────────────────────────────── */
 .chat-container {
+    font-family: 'Arial', monospace;
     flex: 1;
     min-height: 0;
     background: #000000;
@@ -392,7 +456,7 @@ body, html {
     border: none;
     border-bottom: 0px solid var(--border-2);
     color: var(--muted);
-    font-family: inherit;
+    font-family: 'Arial', monospace;
     font-size: 12px;
     font-weight: 300;
     padding: 4px 0;
@@ -401,7 +465,7 @@ body, html {
     transition: border-color 0.2s;
 }
 .nick-row input:focus            { border-color: rgba(0,0,0,0); }
-.nick-row input::placeholder     { color: var(--muted); }
+.nick-row input::placeholder     { color: var(--accent); }
 .nick-row input:-webkit-autofill,
 .nick-row input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 1000px #050505 inset;
@@ -411,6 +475,7 @@ body, html {
 /* Scrollable messages area */
 .chat-messages {
     flex: 1;
+    font-family: 'Arial', monospace;
     min-height: 0;
     padding: 12px 8px 12px 15px;
     overflow-y: scroll;
@@ -455,7 +520,7 @@ body, html {
         width: 12px;
     }
     .chat-messages::-webkit-scrollbar-track {
-        background: #00000;
+        background: #000000;
         border-left: 1px solid #111;
     }
     .chat-messages::-webkit-scrollbar-thumb {
@@ -476,9 +541,10 @@ body, html {
     padding-bottom: 6px;
     word-break: break-word;
     flex-shrink: 0;
+    font-family: Arial, sans-serif;
 }
 .msg .nick {
-    font-family: 'Arial', monospace;
+    font-family: Arial, sans-serif;
     font-size: 9px;
     display: block;
     margin-bottom: 2px;
@@ -509,11 +575,11 @@ body, html {
 .chat-input-area input {
     flex: 1;
     background: #000;
-    border: 1px solid var(--border-2);
+    border: 1px solid var(--accent);
     border-radius: 4px;
     padding: 10px 12px;
     color: var(--text);
-    font-family: inherit;
+    font-family: Arial, sans-serif;
     font-size: 13px;
     font-weight: 300;
     outline: none;
@@ -529,9 +595,9 @@ body, html {
 }
 
 .send-btn {
-    font-family: 'Silkscreen', monospace;
+    font-family: Arial, sans-serif;
     background: #050505;
-    border: 1px solid var(--border-2);
+    border: 1px solid var(--accent);
     color: var(--accent);
     padding: 0 14px;
     border-radius: 4px;
@@ -557,7 +623,15 @@ body, html {
         flex: 1;
         height: 100vh;
         border-right: 1px solid var(--border);
+        justify-content: space-between;
+        padding: 40px 10px;
     }
+
+    .fader-area     { height: 389px; margin-top: 0; }
+    .surco          { height: 389px; }
+    .vu-col         { height: 389px; }
+    .technics-fader { width: 497px; }
+    .technics-button { margin-top: 0; }
 
     .chat-container {
         width: var(--chat-w);
@@ -574,14 +648,21 @@ body, html {
 @media (max-width: 480px) {
     #countdownScreen { gap: 28px; }
 
-    .flip-clock { gap: 6px; }
-    .flip-pair  { gap: 3px; }
+    .flip-clock { gap: 24px; }
+    .flip-pair  { gap: 7px; }
 
-    .fd { width: 56px; height: 72px; perspective: 320px; }
-    .fd-new, .fd-flap-num { font-size: 48px; }
-    .fc-colon { font-size: 40px; line-height: 72px; }
+    .fd { width: 122px; height: 150px; perspective: 680px; }
+    .fd-upper-back span, .fd-upper-front span,
+    .fd-lower-back span, .fd-lower-front span { font-size: 149px; }
 
-    .radio-section { flex: 0 0 55%; }
+    .radio-section   { flex: 0 0 70%; justify-content: flex-start; padding: 24px 10px 12px; }
+    .header-wrapper  { margin-top: auto; margin-bottom: auto; }
+    .chat-container  { flex: 0 0 30%; }
+    .fader-area      { height: 373px; }
+    .surco           { height: 373px; }
+    .vu-col          { height: 373px; }
+    .technics-fader  { width: 476px; }
+    .technics-button { margin-top: auto; }
 }
 
 /* ─────────────────────────────────────────────
@@ -618,7 +699,7 @@ body, html {
 }
 
 .admin-label {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 8px;
     letter-spacing: 2px;
     color: var(--muted);
@@ -631,7 +712,7 @@ body, html {
     border: 1px solid var(--border-2);
     border-radius: 3px;
     color: var(--accent);
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 11px;
     padding: 10px 12px;
     outline: none;
@@ -643,7 +724,7 @@ body, html {
 .admin-input:focus { border-color: rgba(115, 240, 142); }
 
 .admin-current {
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 8px;
     color: var(--muted);
     letter-spacing: 1px;
@@ -657,7 +738,7 @@ body, html {
 
 .admin-btn {
     flex: 1;
-    font-family: 'Silkscreen', monospace;
+    font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 8px;
     letter-spacing: 2px;
     padding: 10px;
