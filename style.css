@@ -657,7 +657,7 @@ body, html {
     .fd-upper-back span, .fd-upper-front span,
     .fd-lower-back span, .fd-lower-front span { font-size: 149px; }
 
-    .radio-section   { flex: 0 0 70%; justify-content: flex-start; padding: 24px 10px 12px; }
+    .radio-section   { flex: 0 0 70%; justify-content: flex-start; padding: 24px 10px 0; }
     .header-wrapper  { margin-top: auto; margin-bottom: auto; }
     .chat-container  { flex: 0 0 30%; }
     .fader-area      { height: 373px; }
