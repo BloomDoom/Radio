@@ -241,6 +241,7 @@ body, html {
 
 /* Enter button */
 .enter-btn {
+    margin-top: -24px;
     font-family: 'LedDisplay', 'Silkscreen', monospace;
     background: none;
     border: 1px solid var(--accent);
@@ -630,7 +631,7 @@ body, html {
     .fader-area     { height: 389px; margin-top: 0; }
     .surco          { height: 389px; }
     .vu-col         { height: 389px; }
-    .technics-fader { width: 497px; }
+    .technics-fader { width: 425px; }
     .technics-button { margin-top: 0; }
 
     .chat-container {
@@ -647,6 +648,7 @@ body, html {
 ───────────────────────────────────────────── */
 @media (max-width: 480px) {
     #countdownScreen { gap: 28px; }
+    .enter-btn { margin-top: 0; }
 
     .flip-clock { gap: 24px; }
     .flip-pair  { gap: 7px; }
@@ -661,7 +663,7 @@ body, html {
     .fader-area      { height: 373px; }
     .surco           { height: 373px; }
     .vu-col          { height: 373px; }
-    .technics-fader  { width: 476px; }
+    .technics-fader  { width: 409px; }
     .technics-button { margin-top: auto; }
 }
 
