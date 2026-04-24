@@ -368,7 +368,7 @@ function esc(s) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ADMIN PANEL  (shortcut: Ctrl + Shift + A)
+   ADMIN PANEL  (shortcut: Ctrl + Shift + Z)
 ═══════════════════════════════════════════════════════════ */
 const adminPanel     = document.getElementById('adminPanel');
 const adminDateInput = document.getElementById('adminDateInput');
@@ -393,7 +393,7 @@ function closeAdmin() {
 }
 
 document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+    if (e.ctrlKey && e.shiftKey && e.key === 'Z') {
         e.preventDefault();
         adminPanel.classList.contains('hidden') ? openAdmin() : closeAdmin();
     }
