@@ -9,121 +9,33 @@ const DEFAULT_SHOW_TIME = '2025-06-01T22:00:00';
 let SHOW_TIME = new Date(localStorage.getItem('showTime') || DEFAULT_SHOW_TIME);
 
 /* ═══════════════════════════════════════════════════════════
-   FLIP DIGIT
+   COUNTDOWN UNIT
 ═══════════════════════════════════════════════════════════ */
-class FlipDigit {
-    constructor(parent) {
-        this.val       = null;
-        this.animating = false;
-
-        this.el = document.createElement('div');
-        this.el.className = 'fd';
-        this.el.innerHTML =
-            '<div class="fd-upper-back"><span>0</span></div>'  +
-            '<div class="fd-upper-front"><span>0</span></div>' +
-            '<div class="fd-lower-back"><span>0</span></div>'  +
-            '<div class="fd-lower-front"><span>0</span></div>' +
-            '<div class="fd-line"></div>';
-        parent.appendChild(this.el);
-
-        this._upperBackSpan  = this.el.querySelector('.fd-upper-back span');
-        this._upperFrontSpan = this.el.querySelector('.fd-upper-front span');
-        this._upperFrontEl   = this.el.querySelector('.fd-upper-front');
-        this._lowerBackSpan  = this.el.querySelector('.fd-lower-back span');
-        this._lowerFrontSpan = this.el.querySelector('.fd-lower-front span');
-        this._lowerFrontEl   = this.el.querySelector('.fd-lower-front');
-    }
-
-    update(v) {
-        v = String(v);
-        if (v === this.val) return;
-        const old = this.val;
-        this.val  = v;
-
-        if (old === null) {
-            this._upperBackSpan.textContent  = v;
-            this._upperFrontSpan.textContent = v;
-            this._lowerBackSpan.textContent  = v;
-            this._lowerFrontSpan.textContent = v;
-            return;
-        }
-        if (this.animating) {
-            this._upperBackSpan.textContent  = v;
-            this._upperFrontSpan.textContent = v;
-            this._lowerBackSpan.textContent  = v;
-            this._lowerFrontSpan.textContent = v;
-            return;
-        }
-
-        this.animating = true;
-
-        // Top: front holds old (folds away), back pre-loads new (revealed)
-        this._upperFrontSpan.textContent = old;
-        this._upperBackSpan.textContent  = v;
-        // Bottom: back holds old (stays visible), front pre-loads new (falls in)
-        this._lowerBackSpan.textContent  = old;
-        this._lowerFrontSpan.textContent = v;
-
-        this._upperFrontEl.style.animation = 'none';
-        this._upperFrontEl.style.transform = 'rotateX(0deg)';
-        this._lowerFrontEl.style.animation = 'none';
-        this._lowerFrontEl.style.transform = 'rotateX(-90deg)';
-        void this._upperFrontEl.offsetWidth;
-        this._upperFrontEl.style.animation = '';
-        this._upperFrontEl.style.transform = '';
-        this._lowerFrontEl.style.animation = '';
-        this._lowerFrontEl.style.transform = '';
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => this.el.classList.add('flipping'));
-        });
-
-        // Total duration: bottom delay (0.3s) + bottom duration (0.5s) = 0.8s
-        setTimeout(() => {
-            this.el.classList.remove('flipping');
-            // Settle: sync back layers, reset fronts for next flip
-            this._lowerBackSpan.textContent  = v;
-            this._upperFrontSpan.textContent = v;
-            this._upperFrontEl.style.animation = 'none';
-            this._upperFrontEl.style.transform = 'rotateX(0deg)';
-            this._lowerFrontEl.style.animation = 'none';
-            this._lowerFrontEl.style.transform = 'rotateX(-90deg)';
-            requestAnimationFrame(() => {
-                this._upperFrontEl.style.animation = '';
-                this._upperFrontEl.style.transform = '';
-                this._lowerFrontEl.style.animation = '';
-                this._lowerFrontEl.style.transform = '';
-                this.animating = false;
-            });
-        }, 900);
-    }
-}
-
-class FlipUnit {
+class CountUnit {
     constructor(containerId) {
-        const wrap  = document.getElementById(containerId);
-        this.digits = [new FlipDigit(wrap), new FlipDigit(wrap)];
+        const wrap = document.getElementById(containerId);
+        this.span = document.createElement('span');
+        this.span.className = 'cd-digits';
+        this.span.textContent = '00';
+        wrap.appendChild(this.span);
     }
     update(n) {
-        const s = String(Math.max(0, Math.floor(n))).padStart(2, '0');
-        this.digits[0].update(s[0]);
-        this.digits[1].update(s[1]);
+        this.span.textContent = String(Math.max(0, Math.floor(n))).padStart(2, '0');
     }
 }
 
 /* ═══════════════════════════════════════════════════════════
    COUNTDOWN
 ═══════════════════════════════════════════════════════════ */
-const unitDays  = new FlipUnit('fp-days');
-const unitHours = new FlipUnit('fp-hours');
-const unitMins  = new FlipUnit('fp-mins');
+const unitDays  = new CountUnit('fp-days');
+const unitHours = new CountUnit('fp-hours');
+const unitMins  = new CountUnit('fp-mins');
 let countdownTimer = null;
 
 function tick() {
     const diff = SHOW_TIME - new Date();
     if (diff <= 0) {
         unitDays.update(0); unitHours.update(0); unitMins.update(0);
-        setTimeout(switchToLive, 1000);
         return;
     }
     const totalSecs = Math.floor(diff / 1000);
@@ -240,6 +152,12 @@ function updateVU(container, activeCount) {
 }
 
 playBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    }
     initAudio();
     if (!isPlaying) {
         player.src = STREAM_URL;

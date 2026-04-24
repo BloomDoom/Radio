@@ -82,7 +82,7 @@ body, html {
     font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 20px;
     letter-spacing: 4px;
-    color: var(--text);
+    color: var(--accent);
     text-transform: uppercase;
 }
 
@@ -109,8 +109,9 @@ body, html {
     font-family: 'LedDisplay', 'Silkscreen', monospace;
     font-size: 14px;
     letter-spacing: 3px;
-    color: var(--text);
+    color: var(--accent);
     text-transform: uppercase;
+    margin-top: -20px;
 }
 
 .fc-colon {
@@ -121,122 +122,15 @@ body, html {
     user-select: none;
 }
 
-/* Flip Digit Card */
-.fd {
-    position: relative;
-    width: 187px;
-    height: 221px;
-    perspective: 1020px;
-}
-
-/* Top half — back layer, next number pre-loaded, revealed when front folds */
-.fd-upper-back {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 50%;
-    overflow: hidden;
-    background: #111;
-    border-radius: 4px 4px 0 0;
-    z-index: 1;
-}
-
-/* Top half — front layer, current number, folds down on change */
-.fd-upper-front {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 50%;
-    overflow: hidden;
-    background: #181818;
-    border-radius: 4px 4px 0 0;
-    transform-origin: bottom center;
-    backface-visibility: hidden;
-    z-index: 2;
-}
-
-/* Bottom half — back layer, current number, stays visible while top folds */
-.fd-lower-back {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 50%;
-    overflow: hidden;
-    background: #111;
-    border-radius: 0 0 4px 4px;
-    box-shadow: inset 0 -2px 8px rgba(0,0,0,0.6);
-    z-index: 1;
-}
-
-/* Bottom half — front layer, next number, folded up at center line, falls down */
-.fd-lower-front {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 50%;
-    overflow: hidden;
-    background: #181818;
-    border-radius: 0 0 4px 4px;
-    transform-origin: top center;
-    transform: rotateX(-90deg);
-    backface-visibility: hidden;
-    z-index: 2;
-}
-
-/* Spans inside top halves: 200% height from top, shows upper half of digit */
-.fd-upper-back span,
-.fd-upper-front span {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 200%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-    font-size: 215px;
+/* LED Digit Display */
+.cd-digits {
+    font-family: 'LedDisplay', monospace;
+    font-size: 90px;
     color: var(--accent);
-    text-shadow: 0 0 20px var(--accent-glow);
+    text-shadow: 0 0 24px var(--accent-glow), 0 0 8px var(--accent-glow);
+    letter-spacing: 6px;
     user-select: none;
-}
-
-/* Spans inside bottom halves: 200% height from bottom, shows lower half of digit */
-.fd-lower-back span,
-.fd-lower-front span {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 200%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-    font-size: 215px;
-    color: var(--accent);
-    text-shadow: 0 0 20px var(--accent-glow);
-    user-select: none;
-}
-
-.fd-line {
-    position: absolute;
-    top: 50%;
-    left: 0; right: 0;
-    height: 2px;
-    background: #000;
-    transform: translateY(-50%);
-    z-index: 10;
-}
-
-.fd.flipping .fd-upper-front {
-    animation: topFold 0.5s cubic-bezier(0.4, 0, 0.6, 1) forwards;
-}
-
-.fd.flipping .fd-lower-front {
-    animation: bottomFold 0.5s cubic-bezier(0.4, 0, 0.6, 1) 0.3s forwards;
-}
-
-@keyframes topFold {
-    from { transform: rotateX(0deg); }
-    to   { transform: rotateX(90deg); }
-}
-
-@keyframes bottomFold {
-    from { transform: rotateX(-90deg); }
-    to   { transform: rotateX(0deg); }
+    line-height: 1;
 }
 
 /* Enter button */
@@ -651,11 +545,7 @@ body, html {
     .enter-btn { margin-top: 0; }
 
     .flip-clock { gap: 24px; }
-    .flip-pair  { gap: 7px; }
-
-    .fd { width: 122px; height: 150px; perspective: 680px; }
-    .fd-upper-back span, .fd-upper-front span,
-    .fd-lower-back span, .fd-lower-front span { font-size: 149px; }
+    .cd-digits  { font-size: 62px; letter-spacing: 4px; }
 
     .radio-section   { flex: 0 0 70%; justify-content: flex-start; padding: 24px 10px 0; }
     .header-wrapper  { margin-top: auto; margin-bottom: auto; }
