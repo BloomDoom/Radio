@@ -366,3 +366,55 @@ function esc(s) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
 }
+
+/* ═══════════════════════════════════════════════════════════
+   ADMIN PANEL  (shortcut: Ctrl + Shift + B)
+═══════════════════════════════════════════════════════════ */
+const adminPanel     = document.getElementById('adminPanel');
+const adminDateInput = document.getElementById('adminDateInput');
+const adminCurrent   = document.getElementById('adminCurrent');
+const adminSave      = document.getElementById('adminSave');
+const adminCancel    = document.getElementById('adminCancel');
+
+function toLocalDatetimeValue(date) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function openAdmin() {
+    adminDateInput.value = toLocalDatetimeValue(SHOW_TIME);
+    adminCurrent.textContent = 'Actual: ' + SHOW_TIME.toLocaleString();
+    adminPanel.classList.remove('hidden');
+    adminDateInput.focus();
+}
+
+function closeAdmin() {
+    adminPanel.classList.add('hidden');
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'B') {
+        e.preventDefault();
+        adminPanel.classList.contains('hidden') ? openAdmin() : closeAdmin();
+    }
+    if (e.key === 'Escape') closeAdmin();
+});
+
+adminSave.addEventListener('click', () => {
+    const val = adminDateInput.value;
+    if (!val) return;
+    const newTime = new Date(val);
+    if (isNaN(newTime)) return;
+    SHOW_TIME = newTime;
+    localStorage.setItem('showTime', newTime.toISOString());
+    clearTimeout(countdownTimer);
+    tick();
+    closeAdmin();
+});
+
+adminCancel.addEventListener('click', closeAdmin);
+
+// Close on backdrop click
+adminPanel.addEventListener('click', (e) => {
+    if (e.target === adminPanel) closeAdmin();
+});
