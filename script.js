@@ -101,16 +101,10 @@ for (let i = 0; i < VU_COUNT; i++) {
     vuR.appendChild(r);
 }
 
-player.crossOrigin = 'anonymous';
-player.src = STREAM_URL;
 player.volume = parseFloat(fader.value);
-fader.addEventListener('input', () => {
-    const vol = parseFloat(fader.value);
-    if (gainNode) gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
-    else player.volume = vol;
-});
+fader.addEventListener('input', () => { player.volume = parseFloat(fader.value); });
 
-let audioCtx, analyserL, analyserR, gainNode;
+let audioCtx, analyserL, analyserR;
 let lastL = 0, lastR = 0;
 
 function initAudio() {
@@ -120,16 +114,13 @@ function initAudio() {
     }
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const source   = audioCtx.createMediaElementSource(player);
-    gainNode = audioCtx.createGain();
-    gainNode.gain.setValueAtTime(parseFloat(fader.value), audioCtx.currentTime);
     const splitter = audioCtx.createChannelSplitter(2);
     analyserL = audioCtx.createAnalyser(); analyserL.smoothingTimeConstant = 0.6;
     analyserR = audioCtx.createAnalyser(); analyserR.smoothingTimeConstant = 0.6;
-    source.connect(gainNode);
-    gainNode.connect(splitter);
+    source.connect(splitter);
     splitter.connect(analyserL, 0);
     splitter.connect(analyserR, 1);
-    gainNode.connect(audioCtx.destination);
+    source.connect(audioCtx.destination);
     drawVU();
 }
 
@@ -139,14 +130,9 @@ function drawVU() {
     const dataR = new Uint8Array(analyserR.frequencyBinCount);
     analyserL.getByteFrequencyData(dataL);
     analyserR.getByteFrequencyData(dataR);
-    let avgL = dataL.reduce((a, b) => a + b) / dataL.length;
-    let avgR = dataR.reduce((a, b) => a + b) / dataR.length;
-    // iOS Safari can't analyse a cross-origin media stream — simulate when playing but silent
-    if (isPlaying && avgL < 1 && avgR < 1) {
-        const t = Date.now() / 1000;
-        avgL = 55 + Math.sin(t * 1.3) * 25 + Math.sin(t * 3.7) * 15;
-        avgR = 55 + Math.sin(t * 1.7) * 25 + Math.sin(t * 2.9) * 15;
-    }
+    const avgL = dataL.reduce((a, b) => a + b) / dataL.length;
+    const avgR = dataR.reduce((a, b) => a + b) / dataR.length;
+    // Smoothed lerp for natural falloff
     lastL = lastL + (avgL - lastL) * 0.35;
     lastR = lastR + (avgR - lastR) * 0.35;
     const vol    = player.volume;
@@ -170,7 +156,6 @@ function updateVU(container, activeCount) {
 }
 
 playBtn.addEventListener('click', () => {
-    tryFullscreen();
     initAudio();
     if (!isPlaying) {
         player.src = STREAM_URL;
