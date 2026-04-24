@@ -1,4 +1,4 @@
-ARENA MIX RADIO— v2.0
+RADIO SECRETA — v2.0
 ====================
 
 Web-based radio streaming player with countdown, live chat, and admin panel.

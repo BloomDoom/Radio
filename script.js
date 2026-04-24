@@ -104,9 +104,13 @@ for (let i = 0; i < VU_COUNT; i++) {
 player.crossOrigin = 'anonymous';
 player.src = STREAM_URL;
 player.volume = parseFloat(fader.value);
-fader.addEventListener('input', () => { player.volume = parseFloat(fader.value); });
+fader.addEventListener('input', () => {
+    const vol = parseFloat(fader.value);
+    if (gainNode) gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+    else player.volume = vol;
+});
 
-let audioCtx, analyserL, analyserR;
+let audioCtx, analyserL, analyserR, gainNode;
 let lastL = 0, lastR = 0;
 
 function initAudio() {
@@ -116,13 +120,16 @@ function initAudio() {
     }
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const source   = audioCtx.createMediaElementSource(player);
+    gainNode = audioCtx.createGain();
+    gainNode.gain.setValueAtTime(parseFloat(fader.value), audioCtx.currentTime);
     const splitter = audioCtx.createChannelSplitter(2);
     analyserL = audioCtx.createAnalyser(); analyserL.smoothingTimeConstant = 0.6;
     analyserR = audioCtx.createAnalyser(); analyserR.smoothingTimeConstant = 0.6;
-    source.connect(splitter);
+    source.connect(gainNode);
+    gainNode.connect(splitter);
     splitter.connect(analyserL, 0);
     splitter.connect(analyserR, 1);
-    source.connect(audioCtx.destination);
+    gainNode.connect(audioCtx.destination);
     drawVU();
 }
 

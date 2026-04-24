@@ -3,8 +3,8 @@
 ───────────────────────────────────────────── */
 @font-face {
     font-family: 'LedDisplay';
-    src: url('LedDisplay.otf') format('opentype'),
-         url('LedDisplay.ttf') format('truetype');
+    src: url('LedDisplayFont/LedDisplay.otf') format('opentype'),
+         url('LedDisplayFont/LedDisplay.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
