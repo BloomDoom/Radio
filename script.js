@@ -67,11 +67,15 @@ function switchToLive() {
     }, 680);
 }
 
-document.getElementById('enterBtn').addEventListener('click', () => {
+function tryFullscreen() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
     const el = document.documentElement;
-    if (el.requestFullscreen) el.requestFullscreen();
-    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (req) req.call(el).catch(() => {});
+}
+
+document.getElementById('enterBtn').addEventListener('click', () => {
+    tryFullscreen();
     switchToLive();
 });
 
@@ -97,6 +101,8 @@ for (let i = 0; i < VU_COUNT; i++) {
     vuR.appendChild(r);
 }
 
+player.crossOrigin = 'anonymous';
+player.src = STREAM_URL;
 player.volume = parseFloat(fader.value);
 fader.addEventListener('input', () => { player.volume = parseFloat(fader.value); });
 
@@ -126,9 +132,14 @@ function drawVU() {
     const dataR = new Uint8Array(analyserR.frequencyBinCount);
     analyserL.getByteFrequencyData(dataL);
     analyserR.getByteFrequencyData(dataR);
-    const avgL = dataL.reduce((a, b) => a + b) / dataL.length;
-    const avgR = dataR.reduce((a, b) => a + b) / dataR.length;
-    // Smoothed lerp for natural falloff
+    let avgL = dataL.reduce((a, b) => a + b) / dataL.length;
+    let avgR = dataR.reduce((a, b) => a + b) / dataR.length;
+    // iOS Safari can't analyse a cross-origin media stream — simulate when playing but silent
+    if (isPlaying && avgL < 1 && avgR < 1) {
+        const t = Date.now() / 1000;
+        avgL = 55 + Math.sin(t * 1.3) * 25 + Math.sin(t * 3.7) * 15;
+        avgR = 55 + Math.sin(t * 1.7) * 25 + Math.sin(t * 2.9) * 15;
+    }
     lastL = lastL + (avgL - lastL) * 0.35;
     lastR = lastR + (avgR - lastR) * 0.35;
     const vol    = player.volume;
@@ -152,12 +163,7 @@ function updateVU(container, activeCount) {
 }
 
 playBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        const el = document.documentElement;
-        if (el.requestFullscreen) el.requestFullscreen();
-        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-        else if (el.msRequestFullscreen) el.msRequestFullscreen();
-    }
+    tryFullscreen();
     initAudio();
     if (!isPlaying) {
         player.src = STREAM_URL;
